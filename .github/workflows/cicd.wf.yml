@@ -1,27 +1,33 @@
-name: CI Workflow 1
+name: Chained Jobs Workflow
 
-on:
-  push:
-    branches: [ main,f1,f2 ]
+on: 
+    push:
+        branches: [ main,f1,f2 ]
+
 jobs:
   job1:
     runs-on: ubuntu-latest
     outputs:
-      dynamic_value: ${{ steps.step1.outputs.random_number }}
+      random_number: ${{ steps.generate_random.outputs.random_number }}
     steps:
-      - id: checkout
-        uses: actions/checkout@v3
-
-      - id: step1
-        name: Generate random number
-        run: echo "random_number=$(($RANDOM % 100))" >> $GITHUB_ENV
+    - id: generate_random
+      name: Generate a random number
+      run: echo "::set-output name=random_number::$(echo $((RANDOM % 100)))"
 
   job2:
     needs: job1
     runs-on: ubuntu-latest
+    outputs:
+      incremented_value: ${{ steps.increment.outputs.incremented_value }}
     steps:
-      - id: checkout
-        uses: actions/checkout@v3
+    - id: increment
+      name: Increment value from job1 by 10
+      run: echo "::set-output name=incremented_value::$(echo $((${{ needs.job1.outputs.random_number }} + 10)))"
 
-      - name: Use output from job1
-        run: echo "The random number from job1 was ${{ needs.job1.outputs.dynamic_value }}"
+  job3:
+    needs: job2
+    runs-on: ubuntu-latest
+    steps:
+    - name: Increment value from job2 by 20
+      run: |
+        ${{ format('echo "Final value: $(echo $(%d + 20))"', needs.job2.outputs.incremented_value) }}
