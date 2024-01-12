@@ -12,17 +12,23 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # Set up Node.js (assuming a Node.js project)
+    # Set up Node.js
     - name: Use Node.js
       uses: actions/setup-node@v1
       with:
         node-version: '16' # Up
 
-    # Your build process here
+    # Install dependencies
     - run: npm install
+
+    # Run tests
+    - name: Run Tests
+      run: npm test
+
+    # Build the application (if applicable)
     - run: npm run build
 
-    # Set an output parameter (example: create a version string based on timestamp)
+    # Set an output parameter (example: create a version string)
     - name: Set build version output
       id: set_output
       run: echo "::set-output name=version::$(date +'%Y%m%d%H%M%S')"
@@ -33,8 +39,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # Mock deployment step
+    # Mock deployment step using the output from the build job
     - name: Deploy
       run: |
         echo "Deploying version ${{ needs.build.outputs.build_version }}"
-        # Replace the above echo with your actual deployment steps
+        # Add your deployment steps here
