@@ -1,18 +1,17 @@
-name: Chained Jobs Workflow
+name: Chained Increment Workflow
 
-on: 
+on:
     push:
-        branches: [ main,f1,f2 ]
-
+      branches: [ main,f1,f2 ]
 jobs:
   job1:
     runs-on: ubuntu-latest
     outputs:
       random_number: ${{ steps.generate_random.outputs.random_number }}
     steps:
-    - id: generate_random
-      name: Generate a random number
-      run: echo "::set-output name=random_number::$(echo $((RANDOM % 100)))"
+      - id: generate_random
+        run: |
+          echo "random_number=$((RANDOM % 100))" >> $GITHUB_ENV
 
   job2:
     needs: job1
@@ -20,14 +19,16 @@ jobs:
     outputs:
       incremented_value: ${{ steps.increment.outputs.incremented_value }}
     steps:
-    - id: increment
-      name: Increment value from job1 by 10
-      run: echo "::set-output name=incremented_value::$(echo $((${{ needs.job1.outputs.random_number }} + 10)))"
+      - id: increment
+        run: |
+          incremented_value=$((${{ needs.job1.outputs.random_number }} + 10))
+          echo "incremented_value=$incremented_value" >> $GITHUB_ENV
 
   job3:
     needs: job2
     runs-on: ubuntu-latest
     steps:
-    - name: Increment value from job2 by 20
-      run: |
-        ${{ format('echo "Final value: $(echo $(%d + 20))"', needs.job2.outputs.incremented_value) }}
+      - name: Increment value from job2 by 20
+        run: |
+          final_value=$((${{ needs.job2.outputs.incremented_value }} + 20))
+          echo "Final value: $final_value"
