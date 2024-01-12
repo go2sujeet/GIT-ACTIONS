@@ -2,7 +2,7 @@ name: CI-CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main,f1,f2 ]
 
 jobs:
   build:
