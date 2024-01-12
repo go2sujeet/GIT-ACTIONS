@@ -1,0 +1,27 @@
+name: Example CI Workflow
+
+on:
+  push:
+    branches: [ main,f1,f2 ]
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    outputs:
+      dynamic_value: ${{ steps.step1.outputs.random_number }}
+    steps:
+      - id: checkout
+        uses: actions/checkout@v3
+
+      - id: step1
+        name: Generate random number
+        run: echo "random_number=$(($RANDOM % 100))" >> $GITHUB_ENV
+
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        uses: actions/checkout@v3
+
+      - name: Use output from job1
+        run: echo "The random number from job1 was ${{ needs.job1.outputs.dynamic_value }}"
