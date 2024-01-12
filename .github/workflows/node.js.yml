@@ -15,6 +15,8 @@ jobs:
     # Set up Node.js (assuming a Node.js project)
     - name: Use Node.js
       uses: actions/setup-node@v1
+      with:
+        node-version: '16' # Up
 
     # Your build process here
     - run: npm install
