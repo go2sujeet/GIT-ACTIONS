@@ -1,26 +1,38 @@
-name: Node.js CI
+name: CI-CD Pipeline
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
-
+    outputs:
+      build_version: ${{ steps.set_output.outputs.version }}
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+
+    # Set up Node.js (assuming a Node.js project)
+    - name: Use Node.js
       uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+
+    # Your build process here
+    - run: npm install
+    - run: npm run build
+
+    # Set an output parameter (example: create a version string based on timestamp)
+    - name: Set build version output
+      id: set_output
+      run: echo "::set-output name=version::$(date +'%Y%m%d%H%M%S')"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    # Mock deployment step
+    - name: Deploy
+      run: |
+        echo "Deploying version ${{ needs.build.outputs.build_version }}"
+        # Replace the above echo with your actual deployment steps
