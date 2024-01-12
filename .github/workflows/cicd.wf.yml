@@ -1,8 +1,9 @@
 name: Chained Increment Workflow
 
 on:
-    push:
-      branches: [ main,f1,f2 ]
+  push:
+    branches: [ main, f1, f2 ]
+
 jobs:
   job1:
     runs-on: ubuntu-latest
@@ -11,7 +12,9 @@ jobs:
     steps:
       - id: generate_random
         run: |
-          echo "random_number=$((RANDOM % 100))" >> $GITHUB_ENV
+          random_number=$((RANDOM % 100))
+          echo "random_number=$random_number" >> $GITHUB_ENV
+          echo "Random number (job1): $random_number"
 
   job2:
     needs: job1
@@ -23,6 +26,7 @@ jobs:
         run: |
           incremented_value=$((${{ needs.job1.outputs.random_number }} + 10))
           echo "incremented_value=$incremented_value" >> $GITHUB_ENV
+          echo "Incremented value (job2): $incremented_value"
 
   job3:
     needs: job2
@@ -31,4 +35,4 @@ jobs:
       - name: Increment value from job2 by 20
         run: |
           final_value=$((${{ needs.job2.outputs.incremented_value }} + 20))
-          echo "Final value: $final_value"
+          echo "Final value (job3): $final_value"
