@@ -10,13 +10,11 @@ jobs:
     outputs:
       build_version: ${{ steps.set_output.outputs.version }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     # Set up Node.js
     - name: Use Node.js
       uses: actions/setup-node@v3
-      with:
-        node-version: '16' # Up
 
     # Install dependencies
     - run: npm install
@@ -37,7 +35,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     # Mock deployment step using the output from the build job
     - name: Deploy
