@@ -18,21 +18,12 @@ jobs:
 
   job2:
     needs: job1
-    runs-on: ubuntu-latest
-    outputs:
-      incremented_value: ${{ steps.increment.outputs.incremented_value }}
-    steps:
-      - id: increment
-        run: |
-          incremented_value=$((${{ needs.job1.outputs.random_number }} + 10))
-          echo "incremented_value=$incremented_value" >> $GITHUB_ENV
-          echo "Incremented value (job2): $incremented_value"
+    uses: ./.github/workflows/reusable-component.yml
+    with:
+      number: ${{ needs.job1.outputs.random_number }}
 
   job3:
     needs: job2
-    runs-on: ubuntu-latest
-    steps:
-      - name: Increment value from job2 by 20
-        run: |
-          final_value=$((${{ needs.job2.outputs.incremented_value }} + 20))
-          echo "Final value (job3): $final_value"
+    uses: ./.github/workflows/reusable-component.yml
+    with:
+      number: ${{ needs.job2.outputs.incremented_number }}
