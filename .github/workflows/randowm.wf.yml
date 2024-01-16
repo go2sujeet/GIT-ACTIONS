@@ -9,7 +9,7 @@ jobs:
       random-number: ${{ steps.generate-number.outputs.random-number }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Generate a Random Number
         id: generate-number
         run: echo "::set-output name=random-number::$(($RANDOM % 100))"
@@ -21,7 +21,7 @@ jobs:
       modified-number: ${{ steps.modify-number.outputs.modified-number }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Add 11 to the Random Number
         id: modify-number
         run: echo "::set-output name=modified-number::$((${{ needs.job1.outputs.random-number }} + 11))"
@@ -31,6 +31,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Add 22 to the Modified Number
         run: echo "Final Result: $((${{ needs.job2.outputs.modified-number }} + 22))"
