@@ -14,23 +14,24 @@ jobs:
         id: generate-number
         run: |
           RANDOM_NUMBER=$(($RANDOM % 100))
-          echo "Generated Random Number: $RANDOM_NUMBER"
+          echo "Job1 Generated Random Number: $RANDOM_NUMBER"
           echo "::set-output name=random-number::$RANDOM_NUMBER"
 
   job2:
     needs: job1
     runs-on: ubuntu-latest
     outputs:
-      modified-number: ${{ steps.modify-number.outputs.modified-number }}
+      combined-number: ${{ steps.add-random.outputs.combined-number }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Add 11 to the Random Number
-        id: modify-number
+      - name: Add Random Number to Job1's Output
+        id: add-random
         run: |
-          MODIFIED_NUMBER=$((${{ needs.job1.outputs.random-number }} + 11))
-          echo "Modified Number (Random Number + 11): $MODIFIED_NUMBER"
-          echo "::set-output name=modified-number::$MODIFIED_NUMBER"
+          ANOTHER_RANDOM=$(($RANDOM % 100))
+          COMBINED_NUMBER=$((${{ needs.job1.outputs.random-number }} + ANOTHER_RANDOM))
+          echo "Job2 Added Random Number: $ANOTHER_RANDOM, Combined: $COMBINED_NUMBER"
+          echo "::set-output name=combined-number::$COMBINED_NUMBER"
 
   job3:
     needs: job2
@@ -38,7 +39,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Add 22 to the Modified Number
+      - name: Add Another Random Number to Job2's Output
         run: |
-          FINAL_RESULT=$((${{ needs.job2.outputs.modified-number }} + 22))
-          echo "Final Result (Modified Number + 22): $FINAL_RESULT"
+          FINAL_RANDOM=$(($RANDOM % 100))
+          FINAL_RESULT=$((${{ needs.job2.outputs.combined-number }} + FINAL_RANDOM))
+          echo "Job3 Added Random Number: $FINAL_RANDOM, Final Result: $FINAL_RESULT"
