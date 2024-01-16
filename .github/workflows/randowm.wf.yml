@@ -1,0 +1,36 @@
+name: Random Number Workflow
+
+on: [push]
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    outputs:
+      random-number: ${{ steps.generate-number.outputs.random-number }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Generate a Random Number
+        id: generate-number
+        run: echo "::set-output name=random-number::$(($RANDOM % 100))"
+
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    outputs:
+      modified-number: ${{ steps.modify-number.outputs.modified-number }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Add 11 to the Random Number
+        id: modify-number
+        run: echo "::set-output name=modified-number::$((${{ needs.job1.outputs.random-number }} + 11))"
+
+  job3:
+    needs: job2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Add 22 to the Modified Number
+        run: echo "Final Result: $((${{ needs.job2.outputs.modified-number }} + 22))"
