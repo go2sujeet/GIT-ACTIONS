@@ -33,4 +33,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Add 22 to the Modified Number
-        run: echo "Final Result: $((${{ needs.job2.outputs.modified-number }} + 22))"
+        run: echo "$((${{ needs.job2.outputs.modified-number }} + 22))"
