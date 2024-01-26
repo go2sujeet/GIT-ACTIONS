@@ -1,4 +1,4 @@
-name: Reusable Increment Job1
+name: Reusable Increment Job
 
 on:
   workflow_call:
