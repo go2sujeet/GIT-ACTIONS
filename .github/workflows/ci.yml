@@ -1,0 +1,10 @@
+name: Random Number Workflow
+
+on: [push]
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Custom Action
+        uses: "./github/actions/cutom-action"
