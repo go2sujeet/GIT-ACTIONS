@@ -1,4 +1,4 @@
-name: Random Number Workflow
+name: Random Number Workflow1
 
 on: [push]
 
