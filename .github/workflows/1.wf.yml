@@ -1,4 +1,4 @@
-name: 1
+name: "the one"
 on:
     workflow_dispatch:
       inputs:
