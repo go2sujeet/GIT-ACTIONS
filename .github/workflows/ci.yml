@@ -1,4 +1,4 @@
-name: Random Number Workflow
+name: The New CI
 
 on: [push]
 
