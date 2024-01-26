@@ -1,0 +1,46 @@
+name: Random Number Workflow1
+
+on: [push]
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    outputs:
+      random-number: ${{ steps.generate-number.outputs.random-number }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Generate a Random Number
+        id: generate-number
+        run: |
+          RANDOM_NUMBER=$(($RANDOM % 100))
+          echo "Job1 Generated Random Number: $RANDOM_NUMBER"
+          echo "::set-output name=random-number::$RANDOM_NUMBER"
+
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    outputs:
+      combined-number: ${{ steps.add-random.outputs.combined-number }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Add Random Number to Job1's Output
+        id: add-random
+        run: |
+          ANOTHER_RANDOM=$(($RANDOM % 100))
+          COMBINED_NUMBER=$((${{ needs.job1.outputs.random-number }} + ANOTHER_RANDOM))
+          echo "Job2 Added Random Number: $ANOTHER_RANDOM, Combined: $COMBINED_NUMBER"
+          echo "::set-output name=combined-number::$COMBINED_NUMBER"
+
+  job3:
+    needs: job2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Add Another Random Number to Job2's Output
+        run: |
+          FINAL_RANDOM=$(($RANDOM % 100))
+          FINAL_RESULT=$((${{ needs.job2.outputs.combined-number }} + FINAL_RANDOM))
+          echo "Job3 Added Random Number: $FINAL_RANDOM, Final Result: $FINAL_RESULT"
